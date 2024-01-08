@@ -7,7 +7,7 @@ The Small Project is part of the Best Practices course at Sup de Vinci. It inclu
 
 ## Useful links - Project
 
-Wiki: https://github.com/romainfb/bordeauxwc/wiki/Workflow
+Wiki: https://github.com/romainfb/lepetitprojet/wiki/Workflow
 
 ## Contributors
 
