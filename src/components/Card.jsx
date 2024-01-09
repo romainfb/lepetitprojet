@@ -1,3 +1,5 @@
+import GoogleMap from "./GoogleMap";
+
 const Card = ({sensorSelected, setSensorSelected ,sensorID, receiverNumber, sensorNumber, sensorStatus, temperatureReading, humidityLevel, batteryLevel, signalStrength, readingDate}) => {
 
     const sensorStatusString = sensorStatus === "1" ? "Disponible" : "Indisponible";

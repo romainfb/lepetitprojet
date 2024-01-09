@@ -6,6 +6,8 @@ import Chart from "react-apexcharts";
 
 import { format } from 'date-fns';
 import frLocale from 'date-fns/locale/fr';
+import {Map} from "@vis.gl/react-google-maps";
+import GoogleMap from "../components/GoogleMap";
 
 function DashboardPage() {
 
@@ -221,6 +223,7 @@ function DashboardPage() {
                                 </div>
                             </div>
                         </div>
+                        <GoogleMap/>
                     </div>
                 )}
 
@@ -245,6 +248,7 @@ function DashboardPage() {
                     ))}
                 </div>
             </div>
+
             
         </div>
 
