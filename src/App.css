@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
 .App {
   text-align: center;
 }
@@ -39,4 +44,8 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.card {
+  margin-left: 0 !important;
 }
