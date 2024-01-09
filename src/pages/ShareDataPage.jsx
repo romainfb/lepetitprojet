@@ -1,29 +1,26 @@
-import Card from "../components/Card";
-import HeadData from "../components/HeadData";
 import SideMenu from "../components/SideMenu";
 import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
+import { useParams } from 'react-router-dom';
 
 import { format } from 'date-fns';
 import frLocale from 'date-fns/locale/fr';
 
-function DashboardPage() {
+function ShareDataPage() {
 
-    const [captors, setCaptors] = useState(null);
-    const [lastUpdate, setLastUpdate] = useState(null);
+    const {numberSensor } = useParams();
+
     const [sensorDetails, setSensorDetails] = useState(null);
     const [sensorUpdates, setSensorUpdates] = useState(null);
     const [sensorTemperature, setSensorTemperature] = useState(null);
     const [sensorHumidity, setSensorHumidity] = useState(null);
-    const [sensorSelected, setSensorSelected] = useState(null);
-
-    const currentURL = window.location.href;
 
     useEffect(() => {
         
         (async () => {
             try{
-                const sensorDetailsResponse = await fetch(`http://45.155.171.156:5000/sensor=${sensorSelected}`,);
+                console.log(numberSensor);
+                const sensorDetailsResponse = await fetch(`http://45.155.171.156:5000/sensor=${numberSensor}`,);
                 const sensorDetailsResponseData = await sensorDetailsResponse.json();
 
                 setSensorDetails(sensorDetailsResponseData);
@@ -42,7 +39,7 @@ function DashboardPage() {
             }
 
         })();
-    }, [sensorSelected]);
+    }, []);
 
     const chartConfig = {
         type: "line",
@@ -127,65 +124,25 @@ function DashboardPage() {
         },
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const captorsResponse = await fetch(
-                    "http://45.155.171.156:5000/sensors/lastsensors"
-                );
-                const captorsResponseData = await captorsResponse.json();
-                setCaptors(captorsResponseData);
-
-                const lastReadingDate =
-                    captorsResponseData[captorsResponseData.length - 1]?.readingDate;
-                setLastUpdate(lastReadingDate);
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        fetchData(); // Fetch data initially
-
-        const interval = setInterval(fetchData, 5 * 1000);
-
-        return () => {
-            clearInterval(interval); // Clear the interval when the component unmounts
-        };
-    }, []);
 
     return (
         <div className="flex h-full w-full flex-col">
 
             <SideMenu />
 
-            {captors && <HeadData lastUpdate={lastUpdate} sensorsCount={captors.length} />}
-
+            {sensorDetails && (
+                <div className="flex w-full h-fit items-center justify-center mt-12 text-center">
+                    <h1 className="text-4xl font-black">Partage du capteur <br /><span className="text-5xl">N°{sensorDetails[0].sensorNumber}</span></h1>
+                </div>
+            )
+            }
+            
             <div className="flex w-full h-full p-20 flex-wrap space-x-8 items-center justify-center">
                 
                 { /* Details card */}
 
                 {sensorDetails && (
                     <div className="card w-full bg-base-100 shadow-xl">
-                        
-                        <button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg rounded-b-none" onClick={()=>document.getElementById('my_modal_1').showModal()}>Partager</button>
-
-                        {/* Open the modal using document.getElementById('ID').showModal() method */}
-                        <dialog id="my_modal_1" className="modal">
-                        <div className="modal-box">
-                            <h3 className="font-bold text-2xl mb-6">Partagez cette statistique</h3>
-
-                            <kbd className="kbd text-xl">{currentURL}share/{sensorDetails[0].sensorNumber}</kbd>
-
-                            <p className="py-4">Partagez notre application dès maintenant !</p>
-                            <div className="modal-action">
-                            <form method="dialog">
-                                {/* if there is a button in form, it will close the modal */}
-                                <button className="btn">Fermer</button>
-                            </form>
-                            </div>
-                        </div>
-                        </dialog>
-
                         <div className="card-body">
                             <h2 className="card-title w-fit">
                                 Capteur n°{sensorDetails[0].sensorNumber}
@@ -246,26 +203,7 @@ function DashboardPage() {
                     </div>
                 )}
 
-                { /* Sensors cards */}
-
-                <div className="flex flex-wrap w-full justify-center items-center">
-                    {captors?.map((item) => (
-                        <Card
-                            sensorSelected = {sensorSelected}
-                            setSensorSelected = {setSensorSelected}
-                            key={item.id}
-                            sensorID={item.sensorID}
-                            receiverNumber={item.receiverNumber}
-                            sensorNumber={item.sensorNumber}
-                            sensorStatus={item.sensorStatus}
-                            temperatureReading={item.temperatureReading}
-                            humidityLevel={item.humidityLevel}
-                            batteryLevel={item.batteryLevel}
-                            signalStrength={item.signalStrength}
-                            readingDate={item.readingDate}
-                        />
-                    ))}
-                </div>
+                
             </div>
             
         </div>
@@ -274,4 +212,4 @@ function DashboardPage() {
     );
 }
 
-export default DashboardPage;
+export default ShareDataPage;
