@@ -7,7 +7,6 @@ import Chart from "react-apexcharts";
 import { format } from 'date-fns';
 import frLocale from 'date-fns/locale/fr';
 
-
 function DashboardPage() {
 
     const [captors, setCaptors] = useState(null);
