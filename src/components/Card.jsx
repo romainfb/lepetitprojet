@@ -1,6 +1,14 @@
-const Card = ({sensorID, receiverNumber, sensorNumber, sensorStatus, temperatureReading, humidityLevel, batteryLevel, signalStrength, readingDate}) => {
+const Card = ({sensorSelected, setSensorSelected ,sensorID, receiverNumber, sensorNumber, sensorStatus, temperatureReading, humidityLevel, batteryLevel, signalStrength, readingDate}) => {
 
     const sensorStatusString = sensorStatus === "1" ? "Disponible" : "Indisponible";
+
+    const SetSensorSelected = (sensorNumber) => {
+        setSensorSelected(sensorNumber);
+    }
+
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    };
 
     let temperatureColor = "";
     if (temperatureReading < 10) {
@@ -12,11 +20,11 @@ const Card = ({sensorID, receiverNumber, sensorNumber, sensorStatus, temperature
     }
 
     return (
-        <div className="card w-96 bg-base-100 shadow-xl cursor-pointer hover:scale-105 duration-500 mt-10 mx-8">
+        <div className="card w-96 bg-base-100 shadow-xl cursor-pointer hover:scale-105 duration-500 mt-10 mx-8" onClick={() => {SetSensorSelected(sensorNumber) && scrollToTop()}}>
         <figure><img src="https://www.slate.fr/sites/default/files/styles/1200x680/public/photo_article_ciel_bleu.jpg" alt="Sensors" /></figure>
         <div className="card-body">
           <h2 className="card-title">
-            Détecteur #{sensorID}
+            <p>Capteur #{sensorNumber}</p>
             <div className="badge bg-green-700 text-white">{sensorStatusString}</div>
           </h2>
           <div className="card-actions justify-end">
