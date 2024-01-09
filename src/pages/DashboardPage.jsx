@@ -1,144 +1,108 @@
+import { useEffect, useState } from "react";
+
 import Card from "../components/Card";
 import HeadData from "../components/HeadData";
 import SideMenu from "../components/SideMenu";
-import { useEffect, useState } from "react";
-import Chart from "react-apexcharts";
 
 import { format } from 'date-fns';
 import frLocale from 'date-fns/locale/fr';
+import DetailsCard from "../components/DetailsCard/DetailsCard";
 
 function DashboardPage() {
 
-    const [captors, setCaptors] = useState(null);
+    const [sensors, setSensors] = useState(null);
     const [lastUpdate, setLastUpdate] = useState(null);
-    const [sensorDetails, setSensorDetails] = useState(null);
-    const [sensorUpdates, setSensorUpdates] = useState(null);
-    const [sensorTemperature, setSensorTemperature] = useState(null);
-    const [sensorHumidity, setSensorHumidity] = useState(null);
-    const [sensorSelected, setSensorSelected] = useState(null);
 
-    const currentURL = window.location.href;
+    /* Selected sensor datas */
+
+    const [selectedSensorNumber, setSensorSelected] = useState(null);
+    const [selectedSensorDatas, setSelectedSensorDatas] = useState(null);
+    const [selectedSensorDates, setSelectedSensorDates] = useState(null);
+    const [selectedSensorTemperatures, setSelectedSensorTemperatures] = useState(null);
+    const [selectedSensorHumidities, setSelectedSensorHumidities] = useState(null);
+
+    const [selectedSensorLibelle, setSelectedSensorLibelle] = useState(null);
+
+    /* useEffect for selected sensor libelle */
+
+    useEffect(() => {
+
+        if(selectedSensorNumber === null) return;
+
+        const fetchSensorLibelle = async () => {
+          try {
+            const response = await fetch(`http://45.155.171.156:5000/get_libelle=${selectedSensorNumber}`);
+            if (response.ok) {
+              const data = await response.json();
+
+              if(data.sensorLibelle){
+                setSelectedSensorLibelle(data.sensorLibelle);
+              }else{
+                setSelectedSensorLibelle(`Détecteur ${selectedSensorNumber}`);
+              }
+            } else {
+              console.error('Failed to fetch sensor libellé');
+            }
+          } catch (error) {
+            console.error('An error occurred while fetching sensor libellé', error);
+          }
+        };
+    
+        // Call the function to fetch sensor libellé
+        fetchSensorLibelle();
+    
+        // Dependency array is empty to run the effect only once when the component mounts
+      }, [selectedSensorNumber]);
+
+
+    /* useEffect for selected sensor datas */
 
     useEffect(() => {
         
         (async () => {
+
+            if(selectedSensorNumber === null) return;
+            
             try{
-                const sensorDetailsResponse = await fetch(`http://45.155.171.156:5000/sensor=${sensorSelected}`,);
-                const sensorDetailsResponseData = await sensorDetailsResponse.json();
+                const selectedSensorDatasResponse = await fetch(`http://45.155.171.156:5000/sensor=${selectedSensorNumber}`,);
+                const selectedSensorDatasResponseData = await selectedSensorDatasResponse.json();
 
-                setSensorDetails(sensorDetailsResponseData);
+                const lastTenDatas = selectedSensorDatasResponseData.slice(-15);
 
-                const sensorTemperature = sensorDetailsResponseData.map((item) => item.temperatureReading);
-                setSensorTemperature(sensorTemperature);
+                setSelectedSensorDatas(lastTenDatas);
 
-                const sensorUpdates = sensorDetailsResponseData.map((item) => format(new Date(item.readingDate), 'dd MMMM yyyy à HH:mm', {locale: frLocale}));
-                setSensorUpdates(sensorUpdates);
+                const selectedSensorTemperatures = lastTenDatas.map((item) => item.temperatureReading);
+                setSelectedSensorTemperatures(selectedSensorTemperatures);
 
-                const sensorHumidity = sensorDetailsResponseData.map((item) => item.humidityLevel);
-                setSensorHumidity(sensorHumidity);
+                const selectedSensorDates = lastTenDatas.map((item) => format(new Date(item.readingDate), 'dd MMMM yyyy à HH:mm', {locale: frLocale}));
+                setSelectedSensorDates(selectedSensorDates);
+
+                const selectedSensorHumidities = lastTenDatas.map((item) => item.humidityLevel);
+                setSelectedSensorHumidities(selectedSensorHumidities);
 
             } catch (error) {
                 console.log(error);
             }
 
         })();
-    }, [sensorSelected]);
 
-    const chartConfig = {
-        type: "line",
-        height: 240,
-        series: [
-        {
-            name: "Température",
-            data: sensorTemperature,
-        },
-        {
-            name: "Humidité",
-            data: sensorHumidity && sensorHumidity[0] !== 255 ? sensorHumidity : [],
-        },
-        ],
-        options: {
-        chart: {
-            toolbar: {
-            show: false,
-            },
-        },
-        title: {
-            show: "",
-        },
-        dataLabels: {
-            enabled: false,
-        },
-        colors: ["#e5e7eb"],
-        stroke: {
-            lineCap: "round",
-            curve: "smooth",
-        },
-        markers: {
-            size: 0,
-        },
-        xaxis: {
-            axisTicks: {
-            show: false,
-            },
-            axisBorder: {
-            show: false,
-            },
-            labels: {
-            style: {
-                colors: "#e5e7eb",
-                fontSize: "12px",
-                fontFamily: "inherit",
-                fontWeight: 400,
-            },
-            },
-            categories: sensorUpdates,
-        },
-        yaxis: {
-            labels: {
-            style: {
-                colors: "#e5e7eb",
-                fontSize: "12px",
-                fontFamily: "inherit",
-                fontWeight: 400,
-            },
-            },
-        },
-        grid: {
-            show: false,
-            borderColor: "#e5e7eb",
-            strokeDashArray: 5,
-            xaxis: {
-            lines: {
-                show: true,
-            },
-            },
-            padding: {
-            top: 5,
-            right: 20,
-            },
-        },
-        fill: {
-            opacity: 0.8,
-        },
-        tooltip: {
-            theme: "dark",
-        },
-        },
-    };
+    }, [selectedSensorNumber]);
+
+    /* useEffect for all sensors datas */
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const captorsResponse = await fetch(
+                const sensorsResponse = await fetch(
                     "http://45.155.171.156:5000/sensors/lastsensors"
                 );
-                const captorsResponseData = await captorsResponse.json();
-                setCaptors(captorsResponseData);
+                const sensorsResponseData = await sensorsResponse.json();
+                setSensors(sensorsResponseData);
 
-                const lastReadingDate =
-                    captorsResponseData[captorsResponseData.length - 1]?.readingDate;
+                const lastReadingDate = sensorsResponseData[sensorsResponseData.length - 1]?.readingDate;
                 setLastUpdate(lastReadingDate);
+
+
             } catch (error) {
                 console.log(error);
             }
@@ -146,113 +110,38 @@ function DashboardPage() {
 
         fetchData(); // Fetch data initially
 
-        const interval = setInterval(fetchData, 5 * 1000);
+        const interval = setInterval(fetchData, 20 * 1000);
 
         return () => {
             clearInterval(interval); // Clear the interval when the component unmounts
         };
+
     }, []);
+
+    
 
     return (
         <div className="flex h-full w-full flex-col">
 
             <SideMenu />
 
-            {captors && <HeadData lastUpdate={lastUpdate} sensorsCount={captors.length} />}
+            {sensors && <HeadData lastUpdate={lastUpdate} sensorsCount={sensors.length} />}
 
             <div className="flex w-full h-full p-20 flex-wrap space-x-8 items-center justify-center">
                 
                 { /* Details card */}
 
-                {sensorDetails && (
-                    <div className="card w-full bg-base-100 shadow-xl">
-                        
-                        <button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg rounded-b-none" onClick={()=>document.getElementById('my_modal_1').showModal()}>Partager</button>
-
-                        {/* Open the modal using document.getElementById('ID').showModal() method */}
-                        <dialog id="my_modal_1" className="modal">
-                        <div className="modal-box">
-                            <h3 className="font-bold text-2xl mb-6">Partagez cette statistique</h3>
-
-                            <kbd className="kbd text-xl">{currentURL}share/{sensorDetails[0].sensorNumber}</kbd>
-
-                            <p className="py-4">Partagez notre application dès maintenant !</p>
-                            <div className="modal-action">
-                            <form method="dialog">
-                                {/* if there is a button in form, it will close the modal */}
-                                <button className="btn">Fermer</button>
-                            </form>
-                            </div>
-                        </div>
-                        </dialog>
-
-                        <div className="card-body">
-                            <h2 className="card-title w-fit">
-                                Capteur n°{sensorDetails[0].sensorNumber}
-                                <div className="badge bg-green-700 text-white"></div>
-                            </h2>
-                            <div className="card-actions justify-end">
-                                <div className="badge badge-outline">{sensorDetails[sensorDetails.length - 1].temperatureReading}°C</div>
-                                <div className="badge badge-outline">{sensorDetails[sensorDetails.length - 1].batteryLevel}% batterie</div>
-
-                                <div className="badge badge-outline">
-                                    {sensorDetails[sensorDetails.length - 1].humidityLevel === 255 ? (
-                                        <div>Humidité N/A</div>
-                                    ) : (
-                                        <div>{sensorDetails[sensorDetails.length - 1].humidityLevel}% d'humidité</div>
-                                    )}
-                                </div>
-
-                                <div className="badge badge-outline">
-                                    {sensorDetails[sensorDetails.length - 1].sensorStatus ? (
-                                        <div>Connecté</div>
-                                    ) : (
-                                        <div>Déconnecté</div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {sensorUpdates && sensorTemperature && sensorHumidity ? <Chart {...chartConfig} /> : <div>Loading...</div>}
-                        </div>
-
-                        <div className="collapse bg-base-200 rounded-t-none">
-                            <input type="checkbox" />
-                            <div className="collapse-title text-xl font-medium">Historique des données</div>
-                            <div className="collapse-content">
-                                <div className="overflow-x-auto">
-                                    <table className="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Température</th>
-                                                <th>Humidité</th>
-                                                <th>Batterie</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {sensorDetails.map((detail, index) => (
-                                                <tr key={index} className={index % 2 === 0 ? "bg-base-200" : ""}>
-                                                    <th>{detail.readingDate}</th>
-                                                    <td>{detail.temperatureReading}°C</td>
-                                                    <td>{detail.humidityLevel === 255 ? "Non communiquée" : `${detail.humidityLevel}%`}</td>
-                                                    <td>{detail.batteryLevel}%</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                {selectedSensorDatas && selectedSensorDates && selectedSensorTemperatures && selectedSensorHumidities && selectedSensorLibelle &&(
+                    <DetailsCard selectedSensorDatas={selectedSensorDatas} selectedSensorDates={selectedSensorDates} selectedSensorTemperatures={selectedSensorTemperatures} selectedSensorHumidities={selectedSensorHumidities} selectedSensorLibelle={selectedSensorLibelle}/>
                 )}
 
                 { /* Sensors cards */}
 
                 <div className="flex flex-wrap w-full justify-center items-center">
-                    {captors?.map((item) => (
+                    {sensors?.map((item) => (
                         <Card
-                            sensorSelected = {sensorSelected}
                             setSensorSelected = {setSensorSelected}
+                            setSelectedSensorLibelle={setSelectedSensorLibelle}
                             key={item.id}
                             sensorID={item.sensorID}
                             receiverNumber={item.receiverNumber}
@@ -267,9 +156,10 @@ function DashboardPage() {
                     ))}
                 </div>
             </div>
+
+            <button className="my-12 py-6 px-4">Bouton mail</button>
             
         </div>
-
         
     );
 }
