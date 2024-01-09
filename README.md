@@ -35,7 +35,7 @@ Wiki: https://github.com/romainfb/lepetitprojet/wiki/Workflow
 6. **POST /send_email**
    - *Description*: Sends an email.
    - *Usage*: `http://localhost:5000/send_email`
-   - *POST Request*: `{ "receiver_email": "romainfb24pro@gmail.com", "message_body": "Message content" }`
+   - *POST Request*: `{ "receiver_email": "example@gmail.com", "message_body": "Message content" }`
 
 ## Contributors
 
