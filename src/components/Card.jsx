@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Card = ({setSensorSelected ,sensorID, receiverNumber, sensorNumber, sensorStatus, temperatureReading, humidityLevel, batteryLevel, signalStrength, readingDate, sensorLibelleParam, setSelectedSensorLibelle}) => {
 
@@ -76,19 +77,22 @@ const Card = ({setSensorSelected ,sensorID, receiverNumber, sensorNumber, sensor
         <div className="card w-96 bg-base-100 shadow-xl cursor-pointer hover:scale-105 duration-500 mt-10 mx-8" onClick={() => {setParentSensorSelected(sensorNumber)}}>
         <figure><img src="https://www.slate.fr/sites/default/files/styles/1200x680/public/photo_article_ciel_bleu.jpg" alt="Sensors" /></figure>
         <div className="card-body">
+          
           <h2 className="card-title">
+           <label htmlFor="nameText">&#10000;</label>
             <input
               type="text"
               value={sensorLibelle}
               onChange={(e) => setSensorLibelle(e.target.value)}
               onKeyDown={handleKeyDown}
               className="outline-none bg-transparent"
+              id="nameText"
             />
-            <div className="badge bg-green-700 text-white">{sensorStatusString}</div>
           </h2>
           <div className="card-actions justify-end">
             <div className={`badge badge-outline ${temperatureColor}`}>{temperatureReading}°C</div> 
             <div className="badge badge-outline">{batteryLevel}%</div>
+            <div className="badge bg-green-700 text-white">{sensorStatusString}</div>
           </div>
         </div>
       </div>

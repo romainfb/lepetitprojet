@@ -13,7 +13,7 @@ const ShareModal = ({selectedSensorDatas, currentURL}) => {
     return (
         <>
 
-        <button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg rounded-b-none" onClick={()=>document.getElementById('share_modal').showModal()}>Partager</button>
+        <button className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg rounded-b-none" onClick={()=>document.getElementById('share_modal').showModal()}>Partager <span className="text-2xl">&#10149;</span></button>
 
         {/* Open the modal using document.getElementById('ID').showModal() method */}
         <dialog id="share_modal" className="modal">

@@ -110,7 +110,7 @@ function DashboardPage() {
 
         fetchData(); // Fetch data initially
 
-        const interval = setInterval(fetchData, 20 * 1000);
+        const interval = setInterval(fetchData, 3600 * 1000);
 
         return () => {
             clearInterval(interval); // Clear the interval when the component unmounts
@@ -157,8 +157,6 @@ function DashboardPage() {
                 </div>
             </div>
 
-            <button className="my-12 py-6 px-4">Bouton mail</button>
-            
         </div>
         
     );

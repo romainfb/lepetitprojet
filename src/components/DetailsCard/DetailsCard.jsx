@@ -90,6 +90,7 @@ const DetailsCard = ({selectedSensorDatas, selectedSensorDates, selectedSensorTe
         },
         },
     };
+    
 
     return (
         <div className="card w-full bg-base-100 shadow-xl">
@@ -101,6 +102,7 @@ const DetailsCard = ({selectedSensorDatas, selectedSensorDates, selectedSensorTe
                 {selectedSensorLibelle}
                 <div className="badge bg-green-700 text-white"></div>
             </h2>
+
             <div className="card-actions justify-end">
                 <div className="badge badge-outline">{selectedSensorDatas[selectedSensorDatas.length - 1].temperatureReading}°C</div>
                 <div className="badge badge-outline">{selectedSensorDatas[selectedSensorDatas.length - 1].batteryLevel}% batterie</div>
@@ -121,6 +123,8 @@ const DetailsCard = ({selectedSensorDatas, selectedSensorDates, selectedSensorTe
                     )}
                 </div>
             </div>
+
+            
 
             <Chart {...chartConfig} />
 
