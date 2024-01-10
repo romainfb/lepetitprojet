@@ -90,7 +90,6 @@ const DetailsCard = ({selectedSensorDatas, selectedSensorDates, selectedSensorTe
         },
         },
     };
-    
 
     return (
         <div className="card w-full bg-base-100 shadow-xl">
@@ -123,8 +122,6 @@ const DetailsCard = ({selectedSensorDatas, selectedSensorDates, selectedSensorTe
                     )}
                 </div>
             </div>
-
-            
 
             <Chart {...chartConfig} />
 

@@ -75,24 +75,35 @@ const Card = ({setSensorSelected ,sensorID, receiverNumber, sensorNumber, sensor
 
     return (
         <div className="card w-96 bg-base-100 shadow-xl cursor-pointer hover:scale-105 duration-500 mt-10 mx-8" onClick={() => {setParentSensorSelected(sensorNumber)}}>
-        <figure><img src="https://www.slate.fr/sites/default/files/styles/1200x680/public/photo_article_ciel_bleu.jpg" alt="Sensors" /></figure>
         <div className="card-body">
           
-          <h2 className="card-title">
+          <h2 className="card-title pt-10">
            <label htmlFor="nameText">&#10000;</label>
             <input
               type="text"
               value={sensorLibelle}
               onChange={(e) => setSensorLibelle(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="outline-none bg-transparent"
+              className="outline-none bg-transparent text-2xl"
               id="nameText"
             />
           </h2>
-          <div className="card-actions justify-end">
-            <div className={`badge badge-outline ${temperatureColor}`}>{temperatureReading}°C</div> 
-            <div className="badge badge-outline">{batteryLevel}%</div>
-            <div className="badge bg-green-700 text-white">{sensorStatusString}</div>
+          <div className="card-actions justify-start">
+            <span className="text-lg">Dernières informations du capteur</span>
+
+            <div className="flex flex-col space-y-1">
+
+              <span><strong>Température : </strong><span className={temperatureColor}>{temperatureReading}°C</span></span>
+              <span><strong>Batterie : </strong>{batteryLevel}%</span>
+              <span><strong>Humidité : </strong>{humidityLevel}%</span>
+              <span><strong>Signal : </strong>{signalStrength}°C</span>
+              <span><strong>Dernière mise à jour : </strong>{readingDate}°C</span>
+              
+            </div>
+            
+
+
+            
           </div>
         </div>
       </div>
